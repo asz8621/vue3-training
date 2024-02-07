@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>week2</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/vue3-toastify@0.1.11/dist/index.css" rel="stylesheet" />
+  <link rel="stylesheet" href="all.css">
+</head>
+
+<body>
+  <div id="app" class="login d-flex justify-content-center align-items-center h-100">
+    <div class="loginBox rounded p-3 m-3 w-100">
+      <h1 class="h3 text-light text-center font-weight-normal my-3">
+        後臺管理系統
+      </h1>
+      <form id="form" @submit.prevent="login">
+        <div class="form-floating mb-3">
+          <input type="email" v-model="user.username" class="form-control" id="username"
+            placeholder="name@example.com" required autofocus>
+          <label for="username">帳號</label>
+        </div>
+        <div class="form-floating">
+          <input type="password" v-model="user.password" class="form-control" id="password"
+            placeholder="Password" required>
+          <label for="password">密碼</label>
+        </div>
+        <button class="btn btn-lg btn-primary w-100 mt-3" type="submit">
+          登入
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.9.1/axios.min.js'
+    integrity='sha512-Xk3wWei2TGrsh9kDSBKUMIjw/86sLUvhtnv9f7fOuIwhhiUTKz8szkWkzHthrM5Bb3Bu9idSzkxOrkzhcneuiw=='
+    crossorigin='anonymous'></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"
+    integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"
+    integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc"
+    crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+  <script type="module">
+    import { apiUrl, apiPath } from './all.js';
+    import { toast } from 'https://cdn.jsdelivr.net/npm/vue3-toastify@0.1.11/+esm';
+    const { createApp } = Vue;
+
+    const app = createApp({
+      data() {
+        return {
+          user: {
+            username: '',
+            password: '',
+          },
+          apiUrl,
+          apiPath,
+        };
+      },
+      methods: {
+        login() {
+          axios.post(`${apiUrl}/admin/signin`, this.user)
+            .then(res => {
+              // console.log('res', res);
+              if (res.data.success) {
+                const { token, expired } = res.data;
+                document.cookie = `adminToken=${token}; expires=${new Date(expired)};`;
+                toast(res.data.message, {
+                  "autoClose": 3000,
+                  "theme": "auto",
+                  "type": "success",
+                  "dangerouslyHTMLString": true,
+                })
+                window.location = 'products.html';
+              }
+            })
+            .catch(err => {
+              if (err.status === 400) {
+                // console.log('err', err)
+                toast(err.data.message, {
+                  "autoClose": 3000,
+                  "theme": "auto",
+                  "type": "error",
+                  "dangerouslyHTMLString": true,
+                })
+              } else {
+                console.error('Error:', err.message);
+              }
+            });
+        }
+      },
+    });
+    app.mount('#app');
+  </script>
+</body>
+</html>
