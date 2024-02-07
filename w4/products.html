@@ -48,6 +48,9 @@
           </table>
           <p>目前有 <span>{{ productLen }}</span> 項產品</p>
         </div>
+        <div class="col-12">
+          <pagination :page="page" :all-page="allPage" @change-page="changePage"></pagination>
+        </div>
       </div>
     </div>
     <!-- Modal -->

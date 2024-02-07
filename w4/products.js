@@ -2,18 +2,22 @@ import { apiUrl, apiPath } from './all.js';
 import { toast } from 'https://cdn.jsdelivr.net/npm/vue3-toastify@0.1.11/+esm';
 import entryModal from './modal/entryModal.js';
 import delModal from './modal/delModal.js';
+import pagination from './pagination.js';
 
 const { createApp } = Vue;
 const app = createApp({
   components:{
     entryModal,
     delModal,
+    pagination,
   },
   data() {
     return {
       apiUrl,
       apiPath,
       selectModal: null,
+      page: 1,
+      allPage: null,
       thead: [
         {
           name: '產品名稱',
@@ -84,13 +88,28 @@ const app = createApp({
       });
     },
     getData() {
-      axios.get(`${apiUrl}/api/${this.apiPath}/admin/products`).then(res => {
+      axios.get(`${apiUrl}/api/${this.apiPath}/admin/products?page=${this.page}`).then(res => {
         this.products = res.data.products;
         this.productLen = res.data.products.length;
+        this.allPage = res.data.pagination.total_pages;
       }).catch(err => {
         console.error(err);
         window.location = 'login.html';
       });
+    },
+    changePage(page) {
+      switch (page) {
+        case 'prev':
+          this.page = this.page - 1;
+          break;
+        case 'next':
+          this.page = this.page + 1;
+          break;
+        default:
+          this.page = page
+          break;
+      }
+      this.getData()
     },
     productDetail(data) {
       this.selectProduct = data;
