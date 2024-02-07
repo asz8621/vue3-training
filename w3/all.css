@@ -1,0 +1,22 @@
+html, body {
+  height: 100%;
+}
+
+.Toastify__toast-body>div:last-child {
+  flex: none;
+}
+
+.login {
+  background-image: url('./images/polygon-scatter-haikei.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+.loginBox {
+  max-width: 320px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.form-signin {
+  max-width: 320px;
+}
